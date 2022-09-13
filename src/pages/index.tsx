@@ -1,9 +1,13 @@
 import { signIn , signOut, useSession} from "next-auth/react";
 import { NextPage } from "next";
 import { trpc } from "../utils/trpc";
+import { useState } from "react";
 
 const Home: NextPage = () => {
   const {data: session, status} = useSession();
+  const [message, setMessage] = useState("")
+  const postMessage = trpc.useMutation("guestbook.postMessage")
+
 
   if(status === "loading"){
     return(
@@ -21,6 +25,19 @@ const Home: NextPage = () => {
           <div className="pt-10">
             <p>Hello {session.user?.name}</p>
             <button onClick={() => signOut()}>Logout</button>
+            <div className="pt-6">
+            <form className="flex gap-2" onSubmit={(e) => {
+              e.preventDefault();
+              postMessage.mutate({
+                name: session.user?.name as string,
+                message
+              });
+              setMessage("");
+            }}>
+              <input type="text" className="px-4 py-2 rounded-md border-2 border-zinc-800 bg-neutral-900 focus:outline-none" placeholder="Your Message" value={message} onChange={(e) =>setMessage(e.target.value)} />
+              <button className="p-2 rounded-md border-2 border-zinc-800 focus:outline-none">Send</button>
+            </form>
+            </div>
             <div className="pt-10">
               <Messages/>
             </div>
@@ -42,7 +59,6 @@ const Home: NextPage = () => {
 
 const Messages : React.FC = () =>{
   const {data: messages, isLoading} = trpc.useQuery(["guestbook.getAll"])
-
   if(isLoading) return <div>Fetching Messages</div>
 
   return(
