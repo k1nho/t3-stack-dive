@@ -3,8 +3,11 @@ import { trpc } from "../utils/trpc";
 
 const TodoPage : NextPage = () => {
     return(
-        <div className="flex flex-col justify-center min-h-screen">
+        <div className="flex flex-col justify-center items-center min-h-screen">
             <Todos/>
+            <div>
+                <a href="/">HOME</a>
+            </div>
         </div>
     )
 }
