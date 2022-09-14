@@ -65,3 +65,9 @@ model Guestbook {
     name String 
     message String @db.VarChar(100)
 }
+
+model Todo {
+    id String @id @default(cuid())
+    task String 
+    done Boolean @default(false)
+}
