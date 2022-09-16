@@ -4,31 +4,24 @@ import { z } from "zod";
 export const todoRouter = createRouter()
   .query("getTodos", {
     async resolve({ ctx }) {
-    try {
-       return await ctx.prisma.todo.findMany({
-        select: {
-          id: true,
-          task: true,
-          done: true,
-       },
-     });
-        
-    } catch (error) {
-      console.log(error)   
-    }
+      try {
+        return await ctx.prisma.todo.findMany();
+      } catch (error) {
+        console.log(error);
+      }
     },
   })
   .query("getTodo", {
     input: z.object({
-        id: z.string()
+      id: z.string(),
     }),
-    async resolve({ctx, input}){
-        return await ctx.prisma.todo.findUnique({
-            where:{
-                id: input.id
-            }
-        })
-    }
+    async resolve({ ctx, input }) {
+      return await ctx.prisma.todo.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+    },
   })
   .mutation("createTodo", {
     input: z.object({
@@ -47,38 +40,37 @@ export const todoRouter = createRouter()
     },
   })
   .mutation("updateTodo", {
-    input : z.object({
-        id: z.string()
+    input: z.object({
+      id: z.string(),
     }),
-    async resolve({ctx, input}){
-        try {
-            return await ctx.prisma.todo.update({
-                where :{
-                    id : input.id
-                },
-                data : {
-                    done: true
-                }
-            })
-        } catch (error) {
-           console.log(error) 
-        }
-    }
-  }).
-  mutation("deleteTodo", {
-    input : z.object({
-        id: z.string()
-    }),
-    async resolve({ctx, input}){
-        try {
-            return await ctx.prisma.todo.delete({
-                where: {
-                    id: input.id
-                }
-            })
-        } catch (error) {
-            console.log(error)
-        }
-    } 
+    async resolve({ ctx, input }) {
+      try {
+        return await ctx.prisma.todo.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            done: true,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
   })
-  ;
+  .mutation("deleteTodo", {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      try {
+        return await ctx.prisma.todo.delete({
+          where: {
+            id: input.id,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  });
