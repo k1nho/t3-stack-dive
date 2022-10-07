@@ -3,11 +3,25 @@ import { NextPage } from "next";
 import { trpc } from "../utils/trpc";
 import { useState } from "react";
 import Link from "next/link"
+import { Character } from "./characters";
+
+
+interface Toy {
+  character: string,
+  power: number,
+  def: number,
+}
+
 
 const Home: NextPage = () => {
   const { data: session, status } = useSession();
   const [message, setMessage] = useState("")
   const ctx = trpc.useContext();
+  const woody: Toy = {
+    character: "woody",
+    power: 10,
+    def: 1000
+  }
   const postMessage = trpc.useMutation("guestbook.postMessage", {
     onMutate: () => {
       ctx.cancelQuery(["guestbook.getAll"])
@@ -37,6 +51,10 @@ const Home: NextPage = () => {
       <Link href="/todos">
         <a>Go to todos</a>
       </Link>
+      <Link href="/character">
+        <a>Visit characters</a>
+      </Link>
+      <Character {...woody} />
       {
         session ? (
           <div className="pt-10">
